@@ -1,0 +1,22 @@
+{
+  "name": "use-file-wizard",
+  "version": "1.0.0",
+  "description": "This hook purpose is to lift the burden of managing file upload processes from your code base",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "omer ziger",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.2",
+    "@types/react": "^18.0.9",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  }
+}
