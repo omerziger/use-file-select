@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import useFileInput from './useFileInput'
 import { decodeAudioFile } from './utils/audioUtils'
-import { Rule, WizardFile } from './types/index'
+import { WizardFile } from './types/index'
 
 export interface UseFileWizardProps {
     type: 'audio' | 'image' | 'video' | 'document'

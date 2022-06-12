@@ -8,7 +8,8 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "jsx": "react",
   },
   "exclude": [
     "node_modules",
