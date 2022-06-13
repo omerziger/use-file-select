@@ -4,6 +4,7 @@ import './button.css'
 
 export const Button = () => {
   const fileWizard = useFileWizard({ type: 'audio', onLoad: console.log })
+  console.log(fileWizard.progress)
 
   return (
     <>

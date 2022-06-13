@@ -13,13 +13,23 @@ export default function useFileWizard(props: UseFileWizardProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [file, setFile] = useState<WizardFile>({ readerFile: null })
   const fileReader = useRef<FileReader>(new FileReader())
+  const [progress, setProgress] = useState(0)
+
+  const updateProgress = useCallback((event: ProgressEvent) => {
+    if (!event.lengthComputable) return
+    const percentLoaded = Math.round((event.loaded / event.total) * 100)
+    setProgress(percentLoaded)
+  }, [])
 
   const handleInputChange = useCallback((e: Event) => {
     const readerFile = (e.target as HTMLInputElement).files![0]
 
-    fileReader.current.onloadstart = () => setLoading(true)
+    fileReader.current.onloadstart = () => {
+      setLoading(true)
+      setProgress(0)
+    }
+    fileReader.current.onprogress = updateProgress
     fileReader.current.onload = () => handleReaderLoad(readerFile)
-
     if (type === 'audio') fileReader.current.readAsArrayBuffer(readerFile)
   }, [])
 
@@ -45,6 +55,7 @@ export default function useFileWizard(props: UseFileWizardProps) {
   return {
     file,
     loading,
+    progress,
     click: () => fileInput.current.click(),
     clear: () => {
       fileInput.current.value = ''
