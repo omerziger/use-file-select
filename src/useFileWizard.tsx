@@ -62,6 +62,7 @@ export default function useFileWizard(props: UseFileWizardProps) {
       fileReader.current.onload = null
       setFile({ readerFile: null })
       setLoading(false)
+      setProgress(0)
     },
   }
 }
