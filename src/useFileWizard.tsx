@@ -5,7 +5,7 @@ import { WizardFile } from './types/index'
 
 export interface UseFileWizardProps {
   type: 'audio' | 'image' | 'video' | 'document'
-  onLoad?: (df: WizardFile) => void
+  onLoad?: (file: WizardFile) => void
 }
 
 export default function useFileWizard(props: UseFileWizardProps) {
