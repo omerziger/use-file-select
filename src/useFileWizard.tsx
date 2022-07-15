@@ -1,14 +1,14 @@
 import { useCallback, useRef, useState } from 'react'
-import useFileInput from './useFileInput'
-import { decodeAudioFile } from './utils/audioUtils'
-import { WizardFile } from './types/index'
+import { useFileInput } from './'
+import { decodeAudioFile } from './utils'
+import { WizardFile } from './types'
 
 export interface UseFileWizardProps {
   type: 'audio' | 'image' | 'video' | 'document'
   onLoad?: (file: WizardFile) => void
 }
 
-export default function useFileWizard(props: UseFileWizardProps) {
+export function useFileWizard(props: UseFileWizardProps) {
   const { type, onLoad } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [file, setFile] = useState<WizardFile>({ readerFile: null })

@@ -6,7 +6,7 @@ export interface UseFileInputProps {
   onChange: (e: Event) => void
 }
 
-export default function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInputElement> {
+export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInputElement> {
   const { type, formats, onChange: handleChange } = props
   const fileInput = useRef<HTMLInputElement>(document.createElement('input'))
 

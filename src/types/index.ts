@@ -1,2 +1,2 @@
-export { default as Rule } from './Rule'
-export { default as WizardFile } from './WizardFile'
+export { Rule } from './Rule'
+export { WizardFile } from './WizardFile'
