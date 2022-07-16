@@ -5,13 +5,13 @@ import { WizardFile } from './types'
 
 export interface UseFileWizardProps {
   type: 'audio' | 'image' | 'video' | 'document'
-  onLoadEnd?: (file: WizardFile) => void
+  onLoadEnd?: (wizardFile: WizardFile) => any
 }
 
 export function useFileWizard(props: UseFileWizardProps) {
   const { type, onLoadEnd } = props
   const [loading, setLoading] = useState<boolean>(false)
-  const [file, setFile] = useState<WizardFile>({ readerFile: null })
+  const [file, setFile] = useState<WizardFile>({ readerFile: null, readerDecode: null })
   const fileReader = useRef<FileReader>(new FileReader())
 
   const handleInputChange = useCallback((e: Event) => {
@@ -19,14 +19,8 @@ export function useFileWizard(props: UseFileWizardProps) {
     const readersFile = (e.target as HTMLInputElement).files![0]
 
     currentFileReader.onloadstart = () => setLoading(true)
-    currentFileReader.onload = () => handleReaderLoad(readersFile)
-
-    switch (type) {
-      case 'audio':
-      case 'video':
-        currentFileReader.readAsArrayBuffer(readersFile)
-        break;
-    }
+    currentFileReader.onloadend = () => handleReaderLoad(readersFile)
+    currentFileReader.readAsArrayBuffer(readersFile)
   }, [fileReader.current])
 
   const fileInput = useFileInput({
@@ -35,7 +29,7 @@ export function useFileWizard(props: UseFileWizardProps) {
   })
 
   const handleReaderLoad = useCallback((readerFile: File) => {
-    const readerDecode = fileReader.current.result
+    const readerDecode = fileReader.current.result as ArrayBuffer
 
     switch (type) {
       case 'audio':
@@ -43,11 +37,16 @@ export function useFileWizard(props: UseFileWizardProps) {
         const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
           const file = { readerFile, readerDecode, audioData: dd }
           setFile(file)
-          onLoadEnd?.(file)
           setLoading(false)
+          onLoadEnd?.(file)
         }
         decodeAudioFile(readerDecode as ArrayBuffer, handleDecodeSuccess)
-        break;
+        break
+      case 'image':
+        const file = { readerFile, readerDecode }
+        setFile(file)
+        setLoading(false)
+        onLoadEnd?.(file)
     }
   }, [])
 
@@ -58,7 +57,7 @@ export function useFileWizard(props: UseFileWizardProps) {
     clear: () => {
       fileInput.current.value = ''
       fileReader.current.onload = null
-      setFile({ readerFile: null })
+      setFile({ readerFile: null, readerDecode: null })
       setLoading(false)
     },
   }

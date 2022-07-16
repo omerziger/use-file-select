@@ -5,8 +5,8 @@ type Props = {}
 
 export default function Example({ }: Props) {
   const fileWizard = useFileWizard({
-    type: 'audio', onLoad(file) {
-      console.log(file);
+    type: 'image', onLoadEnd(wizardFile) {
+      console.log(wizardFile);
     },
   })
   return (
