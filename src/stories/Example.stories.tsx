@@ -6,6 +6,6 @@ export default {
     component: Example
 }
 
-const Template = () => <Example />;
+const Template = () => <Example />
 
 export const Primary = Template.bind({});

@@ -15,13 +15,19 @@ export function useFileWizard(props: UseFileWizardProps) {
   const fileReader = useRef<FileReader>(new FileReader())
 
   const handleInputChange = useCallback((e: Event) => {
-    const readerFile = (e.target as HTMLInputElement).files![0]
+    const currentFileReader = fileReader.current
+    const readersFile = (e.target as HTMLInputElement).files![0]
 
-    fileReader.current.onloadstart = () => setLoading(true)
-    fileReader.current.onload = () => handleReaderLoad(readerFile)
+    currentFileReader.onloadstart = () => setLoading(true)
+    currentFileReader.onload = () => handleReaderLoad(readersFile)
 
-    if (type === 'audio') fileReader.current.readAsArrayBuffer(readerFile)
-  }, [])
+    switch (type) {
+      case 'audio':
+      case 'video':
+        currentFileReader.readAsArrayBuffer(readersFile)
+        break;
+    }
+  }, [fileReader.current])
 
   const fileInput = useFileInput({
     type: type !== 'document' ? type : null,
@@ -31,14 +37,17 @@ export function useFileWizard(props: UseFileWizardProps) {
   const handleReaderLoad = useCallback((readerFile: File) => {
     const readerDecode = fileReader.current.result
 
-    if (type === 'audio') {
-      const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
-        const file = { readerFile, readerDecode, audioData: dd }
-        setFile(file)
-        onLoad?.(file)
-        setLoading(false)
-      }
-      decodeAudioFile(readerDecode as ArrayBuffer, handleDecodeSuccess)
+    switch (type) {
+      case 'audio':
+      case 'video':
+        const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
+          const file = { readerFile, readerDecode, audioData: dd }
+          setFile(file)
+          onLoad?.(file)
+          setLoading(false)
+        }
+        decodeAudioFile(readerDecode as ArrayBuffer, handleDecodeSuccess)
+        break;
     }
   }, [])
 
