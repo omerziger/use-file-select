@@ -11,7 +11,7 @@ export interface UseFileWizardProps {
 export function useFileWizard(props: UseFileWizardProps) {
   const { type, onLoadEnd } = props
   const [loading, setLoading] = useState<boolean>(false)
-  const [file, setFile] = useState<WizardFile>({ readerFile: null, readerDecode: null })
+  const [file, setFile] = useState<WizardFile | null>()
   const fileReader = useRef<FileReader>(new FileReader())
 
   const handleInputChange = useCallback((e: Event) => {
@@ -57,7 +57,7 @@ export function useFileWizard(props: UseFileWizardProps) {
     clear: () => {
       fileInput.current.value = ''
       fileReader.current.onload = null
-      setFile({ readerFile: null, readerDecode: null })
+      setFile(null)
       setLoading(false)
     },
   }

@@ -1,5 +1,5 @@
 export type WizardFile = {
-    readerFile: File | null
-    readerDecode: ArrayBuffer | null
+    readerFile: File
+    readerDecode: ArrayBuffer
     audioData?: AudioBuffer
 }
