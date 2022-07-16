@@ -6,12 +6,14 @@ import { WizardFile } from './types'
 export interface UseFileWizardProps {
   type: 'audio' | 'image' | 'video' | 'document'
   onLoadEnd?: (wizardFile: WizardFile) => any
+  preview?: boolean
 }
 
 export function useFileWizard(props: UseFileWizardProps) {
-  const { type, onLoadEnd } = props
+  const { type, onLoadEnd, preview } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [file, setFile] = useState<WizardFile | null>()
+  const [filePreview, setFilePreview] = useState<string | null>()
   const fileReader = useRef<FileReader>(new FileReader())
 
   const handleInputChange = useCallback((e: Event) => {
@@ -46,18 +48,21 @@ export function useFileWizard(props: UseFileWizardProps) {
         const file = { readerFile, readerDecode }
         setFile(file)
         setLoading(false)
+        preview && setFilePreview(URL.createObjectURL(readerFile))
         onLoadEnd?.(file)
     }
   }, [])
 
   return {
     file,
+    filePreview,
     loading,
     click: () => fileInput.current.click(),
     clear: () => {
       fileInput.current.value = ''
       fileReader.current.onload = null
       setFile(null)
+      setFilePreview(null)
       setLoading(false)
     },
   }

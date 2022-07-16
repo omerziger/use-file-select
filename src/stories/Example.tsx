@@ -1,15 +1,18 @@
 import React from 'react'
 import { useFileWizard } from '../'
 
-type Props = {}
-
-export default function Example({ }: Props) {
-  const fileWizard = useFileWizard({
-    type: 'image', onLoadEnd(wizardFile) {
-      console.log(wizardFile);
-    },
+export default function Example() {
+  const { file, click, filePreview } = useFileWizard({
+    type: 'image',
+    onLoadEnd(wizardFile) { console.log(wizardFile) },
+    preview: true
   })
   return (
-    <button onClick={fileWizard.click}>Select File</button>
+    <>
+      <button onClick={click}>Select File</button>
+      <text>{file?.readerFile?.name}</text>
+      <br/>
+      {filePreview && <img src={filePreview} />}
+    </>
   )
 }
