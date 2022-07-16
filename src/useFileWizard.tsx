@@ -5,11 +5,11 @@ import { WizardFile } from './types'
 
 export interface UseFileWizardProps {
   type: 'audio' | 'image' | 'video' | 'document'
-  onLoad?: (file: WizardFile) => void
+  onLoadEnd?: (file: WizardFile) => void
 }
 
 export function useFileWizard(props: UseFileWizardProps) {
-  const { type, onLoad } = props
+  const { type, onLoadEnd } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [file, setFile] = useState<WizardFile>({ readerFile: null })
   const fileReader = useRef<FileReader>(new FileReader())
@@ -43,7 +43,7 @@ export function useFileWizard(props: UseFileWizardProps) {
         const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
           const file = { readerFile, readerDecode, audioData: dd }
           setFile(file)
-          onLoad?.(file)
+          onLoadEnd?.(file)
           setLoading(false)
         }
         decodeAudioFile(readerDecode as ArrayBuffer, handleDecodeSuccess)
