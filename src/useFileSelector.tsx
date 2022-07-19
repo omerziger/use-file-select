@@ -1,15 +1,15 @@
 import { useCallback, useRef, useState } from 'react'
-import { useFileInput } from './'
+import { useFileInput } from '.'
 import { decodeAudioFile } from './utils'
 import { WizardFile } from './types'
 
-export interface UseFileWizardProps {
+export interface UseFileSelectorProps {
   type: 'audio' | 'image' | 'video' | 'document'
   onLoadEnd?: (wizardFile: WizardFile) => any
   preview?: boolean
 }
 
-export function useFileWizard(props: UseFileWizardProps) {
+export function useFileSelector(props: UseFileSelectorProps) {
   const { type, onLoadEnd, preview } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [file, setFile] = useState<WizardFile | null>()
@@ -57,7 +57,7 @@ export function useFileWizard(props: UseFileWizardProps) {
     file,
     filePreview,
     loading,
-    click: () => fileInput.current.click(),
+    selectFile: () => fileInput.current.click(),
     clear: () => {
       fileInput.current.value = ''
       fileReader.current.onload = null

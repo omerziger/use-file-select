@@ -1,2 +1,2 @@
 export {  useFileInput, UseFileInputProps } from "./useFileInput"
-export {  useFileWizard, UseFileWizardProps } from './useFileWizard'
+export {  useFileSelector, UseFileSelectorProps } from './useFileSelector'
