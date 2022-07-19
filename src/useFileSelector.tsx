@@ -1,18 +1,18 @@
 import { useCallback, useRef, useState } from 'react'
 import { useFileInput } from '.'
 import { decodeAudioFile } from './utils'
-import { WizardFile } from './types'
+import { UFSFile } from './types'
 
 export interface UseFileSelectorProps {
   type: 'audio' | 'image' | 'video' | 'document'
-  onLoadEnd?: (wizardFile: WizardFile) => any
+  onLoadEnd?: (UFSFile: UFSFile) => any
   preview?: boolean
 }
 
 export function useFileSelector(props: UseFileSelectorProps) {
   const { type, onLoadEnd, preview } = props
   const [loading, setLoading] = useState<boolean>(false)
-  const [file, setFile] = useState<WizardFile | null>()
+  const [file, setFile] = useState<UFSFile | null>()
   const [filePreview, setFilePreview] = useState<string | null>()
   const fileReader = useRef<FileReader>(new FileReader())
 
