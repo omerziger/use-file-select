@@ -1,15 +1,15 @@
 import React from 'react'
-import { useFileWizard } from '../'
+import { useFileSelect } from '../'
 
 export default function Example() {
-  const { file, click, filePreview } = useFileWizard({
-    type: 'image',
-    onLoadEnd(wizardFile) { console.log(wizardFile) },
+  const { file, selectFile, filePreview } = useFileSelect({
+    accept: 'image',
+    onLoadEnd(file) { console.log(file) },
     preview: true
   })
   return (
     <>
-      <button onClick={click}>Select File</button>
+      <button onClick={selectFile}>Select File</button>
       <text>{file?.readerFile?.name}</text>
       <br/>
       {filePreview && <img src={filePreview} />}

@@ -3,14 +3,14 @@ import { useFileInput } from '.'
 import { decodeAudioFile } from './utils'
 import { UFSFile } from './types'
 
-export interface UseFileSelectorProps {
-  type: 'audio' | 'image' | 'video' | 'document'
+export interface UseFileSelectProps {
+  accept: 'audio' | 'image' | 'video' | 'document'
   onLoadEnd?: (UFSFile: UFSFile) => any
   preview?: boolean
 }
 
-export function useFileSelector(props: UseFileSelectorProps) {
-  const { type, onLoadEnd, preview } = props
+export function useFileSelect(props: UseFileSelectProps) {
+  const { accept, onLoadEnd, preview } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [file, setFile] = useState<UFSFile | null>()
   const [filePreview, setFilePreview] = useState<string | null>()
@@ -26,14 +26,14 @@ export function useFileSelector(props: UseFileSelectorProps) {
   }, [fileReader.current])
 
   const fileInput = useFileInput({
-    type: type !== 'document' ? type : null,
+    accept: accept !== 'document' ? accept : null,
     onChange: handleInputChange,
   })
 
   const handleReaderLoad = useCallback((readerFile: File) => {
     const readerDecode = fileReader.current.result as ArrayBuffer
 
-    switch (type) {
+    switch (accept) {
       case 'audio':
       case 'video':
         const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
