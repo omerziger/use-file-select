@@ -3,14 +3,13 @@ import { useFileSelect } from '../'
 
 export default function Example() {
   const { file, selectFile, filePreview } = useFileSelect({
-    accept: 'image',
+    accept: 'text',
     onLoadEnd(file) { console.log(file) },
-    preview: true
   })
   return (
     <>
       <button onClick={selectFile}>Select File</button>
-      <text>{file?.readerFile?.name}</text>
+      <p>{file?.readerFile?.name}</p>
       <br/>
       {filePreview && <img src={filePreview} />}
     </>

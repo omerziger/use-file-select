@@ -4,7 +4,7 @@ import { decodeAudioFile } from './utils'
 import { UFSFile } from './types'
 
 export interface UseFileSelectProps {
-  accept: 'audio' | 'image' | 'video' | 'document'
+  accept: 'audio' | 'image' | 'video' | 'text'
   onLoadEnd?: (UFSFile: UFSFile) => any
   preview?: boolean
 }
@@ -26,7 +26,7 @@ export function useFileSelect(props: UseFileSelectProps) {
   }, [fileReader.current])
 
   const fileInput = useFileInput({
-    accept: accept !== 'document' ? accept : null,
+    accept,
     onChange: handleInputChange,
   })
 
@@ -37,19 +37,23 @@ export function useFileSelect(props: UseFileSelectProps) {
       case 'audio':
       case 'video':
         const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
-          const file = { readerFile, readerDecode, audioData: dd }
-          setFile(file)
+          setFile({ readerFile, readerDecode, audioData: dd })
           setLoading(false)
-          onLoadEnd?.(file)
+          onLoadEnd?.({ readerFile, readerDecode, audioData: dd })
         }
         decodeAudioFile(readerDecode as ArrayBuffer, handleDecodeSuccess)
         break
       case 'image':
-        const file = { readerFile, readerDecode }
-        setFile(file)
+        setFile({ readerFile, readerDecode })
         setLoading(false)
         preview && setFilePreview(URL.createObjectURL(readerFile))
-        onLoadEnd?.(file)
+        onLoadEnd?.({ readerFile, readerDecode })
+        break
+      case 'text':
+        setFile({ readerFile, readerDecode })
+        setLoading(false)
+        onLoadEnd?.({ readerFile, readerDecode })
+        break
     }
   }, [])
 
