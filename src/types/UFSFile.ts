@@ -1,5 +1,7 @@
 export type UFSFile = {
-    readerFile: File
-    readerDecode: ArrayBuffer
-    audioData?: AudioBuffer
+    UID: String
+    file: File
+    arrayBuffer: ArrayBuffer
+    audioBuffer?: AudioBuffer
+    preview?: string | null
 }

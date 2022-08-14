@@ -2,16 +2,24 @@ import React from 'react'
 import { useFileSelect } from '../'
 
 export default function Example() {
-  const { file, selectFile, filePreview } = useFileSelect({
+  const {select, files, loading, clear} = useFileSelect({
     accept: 'text',
-    onLoadEnd(file) { console.log(file) },
+    onDone(files) { console.log(files) },
+    multiple: true,
   })
   return (
     <>
-      <button onClick={selectFile}>Select File</button>
-      <p>{file?.readerFile?.name}</p>
-      <br/>
-      {filePreview && <img src={filePreview} />}
+      <button onClick={select}>Select File</button>
+      <p>{loading ? 'loading...' : null}</p>
+      {files.map(f => {
+        debugger
+        return (
+          <>
+          <p>{f.file.name}</p>
+          <br/>
+          </>
+        )
+      })}
     </>
   )
 }

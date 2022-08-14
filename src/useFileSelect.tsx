@@ -1,72 +1,74 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useFileInput } from '.'
-import { decodeAudioFile } from './utils'
+import { decodeAudioFile, uid } from './utils'
 import { UFSFile } from './types'
 
 export interface UseFileSelectProps {
   accept: 'audio' | 'image' | 'video' | 'text'
-  onLoadEnd?: (UFSFile: UFSFile) => any
+  onDone?: (files: UFSFile[]) => any
   preview?: boolean
+  multiple?: boolean
 }
 
 export function useFileSelect(props: UseFileSelectProps) {
-  const { accept, onLoadEnd, preview } = props
+  const { accept, onDone, preview } = props
   const [loading, setLoading] = useState<boolean>(false)
-  const [file, setFile] = useState<UFSFile | null>()
-  const [filePreview, setFilePreview] = useState<string | null>()
-  const fileReader = useRef<FileReader>(new FileReader())
+  const [files, setFiles] = useState<UFSFile[]>([])
 
-  const handleInputChange = useCallback((e: Event) => {
-    const currentFileReader = fileReader.current
-    const readersFile = (e.target as HTMLInputElement).files![0]
-
-    currentFileReader.onloadstart = () => setLoading(true)
-    currentFileReader.onloadend = () => handleReaderLoad(readersFile)
-    currentFileReader.readAsArrayBuffer(readersFile)
-  }, [fileReader.current])
-
-  const fileInput = useFileInput({
-    accept,
-    onChange: handleInputChange,
-  })
-
-  const handleReaderLoad = useCallback((readerFile: File) => {
-    const readerDecode = fileReader.current.result as ArrayBuffer
+  const handleReaderLoadEnd = (e: ProgressEvent, file: File, UID: String, resolve: any) => {
+    const arrayBuffer = (e.target as FileReader).result as ArrayBuffer
 
     switch (accept) {
       case 'audio':
       case 'video':
-        const handleDecodeSuccess: DecodeSuccessCallback = (dd: AudioBuffer) => {
-          setFile({ readerFile, readerDecode, audioData: dd })
-          setLoading(false)
-          onLoadEnd?.({ readerFile, readerDecode, audioData: dd })
-        }
-        decodeAudioFile(readerDecode as ArrayBuffer, handleDecodeSuccess)
+        decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => resolve({ file, UID, arrayBuffer, audioBuffer }))
         break
       case 'image':
-        setFile({ readerFile, readerDecode })
-        setLoading(false)
-        preview && setFilePreview(URL.createObjectURL(readerFile))
-        onLoadEnd?.({ readerFile, readerDecode })
+        resolve({ file, UID, arrayBuffer, preview: preview ? URL.createObjectURL(file) : null })
         break
       case 'text':
-        setFile({ readerFile, readerDecode })
-        setLoading(false)
-        onLoadEnd?.({ readerFile, readerDecode })
+        resolve({ file, arrayBuffer, UID })
         break
     }
-  }, [])
+  }
+
+  const processFile = (file: File, UID: String) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader()
+      fileReader.onloadend = e => handleReaderLoadEnd(e, file, UID, resolve)
+      fileReader.readAsArrayBuffer(file)
+    })
+  }
+
+  const fileInput = useFileInput({
+    accept,
+    multiple: true,
+    onChange: async (e: Event) => {
+      const fileList = (e.target as HTMLInputElement).files as FileList
+      if (!fileList.length) return
+
+      const readers: Promise<any>[] = []
+
+      setLoading(true)
+
+      const fileArr = Array.from(fileList)
+      fileArr.forEach(f => readers.push(processFile(f, uid())))
+
+      await Promise.all(readers).then(async (resolvedFiles) => {
+        setFiles(resolvedFiles)
+        await onDone?.(resolvedFiles)
+        setLoading(false)
+      })
+    },
+  })
 
   return {
-    file,
-    filePreview,
+    files,
     loading,
-    selectFile: () => fileInput.current.click(),
+    select: () => fileInput.current.click(),
     clear: () => {
       fileInput.current.value = ''
-      fileReader.current.onload = null
-      setFile(null)
-      setFilePreview(null)
+      setFiles([])
       setLoading(false)
     },
   }
