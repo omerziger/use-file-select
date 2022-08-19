@@ -1,65 +1,68 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useFileInput } from '.'
-import { decodeAudioFile, uid } from './utils'
-import { UFSFile } from './types'
+import { decodeAudioFile, enforceRules } from './utils'
+import { Rule, UFSFile } from './types'
 
 export interface UseFileSelectProps {
   accept: 'audio' | 'image' | 'video' | 'text'
   onDone?: (files: UFSFile[]) => any
   preview?: boolean
   multiple?: boolean
+  rules?: Rule[]
 }
 
 export function useFileSelect(props: UseFileSelectProps) {
-  const { accept, onDone, preview } = props
+  const { accept, onDone, preview, rules } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
+  const isRules = useMemo(() => Boolean(rules?.length), [rules])
 
-  const handleReaderLoadEnd = (e: ProgressEvent, file: File, UID: String, resolve: any) => {
+  const handleReaderLoadEnd = async (e: ProgressEvent, file: File, resolve: any) => {
     const arrayBuffer = (e.target as FileReader).result as ArrayBuffer
+    const resolvedFile: Partial<UFSFile> = { file, arrayBuffer, errors: [] }
 
-    switch (accept) {
-      case 'audio':
-      case 'video':
-        decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => resolve({ file, UID, arrayBuffer, audioBuffer }))
-        break
-      case 'image':
-        resolve({ file, UID, arrayBuffer, preview: preview ? URL.createObjectURL(file) : null })
-        break
-      case 'text':
-        resolve({ file, arrayBuffer, UID })
-        break
+    if (accept === 'audio' || accept === 'video') {
+      await decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => {
+        resolvedFile.audioBuffer = audioBuffer
+      })
     }
+
+    if (accept === 'image' && preview) resolvedFile.preview = URL.createObjectURL(file)
+
+    if (isRules) resolvedFile.errors = enforceRules(rules as Rule[], resolvedFile as UFSFile)
+
+    resolve(resolvedFile)
   }
 
-  const processFile = (file: File, UID: String) => {
-    return new Promise((resolve, reject) => {
+  const processFile = (file: File) => {
+    return new Promise(resolve => {
       const fileReader = new FileReader()
-      fileReader.onloadend = e => handleReaderLoadEnd(e, file, UID, resolve)
+      fileReader.onloadend = e => handleReaderLoadEnd(e, file, resolve)
       fileReader.readAsArrayBuffer(file)
+    })
+  }
+
+  const handleFileChange = async (e: Event) => {
+    const fileList = (e.target as HTMLInputElement).files as FileList
+    if (!fileList.length) return
+
+    setLoading(true)
+    const readers: Promise<any>[] = []
+
+    const fileArray = Array.from(fileList)
+    fileArray.forEach(f => readers.push(processFile(f)))
+
+    await Promise.all(readers).then(async (resolvedFiles: UFSFile[]) => {
+      setFiles(resolvedFiles)
+      await onDone?.(resolvedFiles)
+      setLoading(false)
     })
   }
 
   const fileInput = useFileInput({
     accept,
     multiple: true,
-    onChange: async (e: Event) => {
-      const fileList = (e.target as HTMLInputElement).files as FileList
-      if (!fileList.length) return
-
-      const readers: Promise<any>[] = []
-
-      setLoading(true)
-
-      const fileArr = Array.from(fileList)
-      fileArr.forEach(f => readers.push(processFile(f, uid())))
-
-      await Promise.all(readers).then(async (resolvedFiles) => {
-        setFiles(resolvedFiles)
-        await onDone?.(resolvedFiles)
-        setLoading(false)
-      })
-    },
+    onChange: handleFileChange,
   })
 
   return {
