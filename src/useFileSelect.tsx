@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useFileInput } from '.'
-import { decodeAudioFile, enforceRules } from './utils'
+import { decodeAudioFile, enforceRules, isValidAudio, isValidImage, isValidVideo } from './utils'
 import { Rule, UFSFile } from './types'
 
 export interface UseFileSelectProps {
@@ -21,13 +21,13 @@ export function useFileSelect(props: UseFileSelectProps) {
     const arrayBuffer = (e.target as FileReader).result as ArrayBuffer
     const resolvedFile: Partial<UFSFile> = { file, arrayBuffer, errors: [] }
 
-    if (accept === 'audio' || accept === 'video') {
+    if (isValidAudio(file, accept) || isValidVideo(file, accept)) {
       await decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => {
         resolvedFile.audioBuffer = audioBuffer
       })
     }
 
-    if (accept === 'image' && preview) resolvedFile.preview = URL.createObjectURL(file)
+    if (isValidImage(file, accept) && preview) resolvedFile.preview = URL.createObjectURL(file)
 
     if (isRules) resolvedFile.errors = enforceRules(rules as Rule[], resolvedFile as UFSFile)
 
