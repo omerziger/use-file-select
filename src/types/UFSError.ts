@@ -1,1 +1,0 @@
-export type UFSError = 'size' | 'duration' | 'format'

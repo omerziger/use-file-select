@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useFileInput } from '.'
 import { decodeAudioFile, enforceRules, isValidAudio, isValidImage, isValidVideo } from './utils'
-import { Rule, UFSFile } from './types'
+import { FileType, Rule, UFSFile } from './types'
 
 export interface UseFileSelectProps {
-  accept: 'audio' | 'image' | 'video' | 'text'
+  accept: FileType
   onDone?: (files: UFSFile[]) => any
   preview?: boolean
   multiple?: boolean
@@ -15,11 +15,10 @@ export function useFileSelect(props: UseFileSelectProps) {
   const { accept, onDone, preview, rules } = props
   const [loading, setLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
-  const isRules = useMemo(() => Boolean(rules?.length), [rules])
 
   const handleReaderLoadEnd = async (e: ProgressEvent, file: File, resolve: any) => {
     const arrayBuffer = (e.target as FileReader).result as ArrayBuffer
-    const resolvedFile: Partial<UFSFile> = { file, arrayBuffer, errors: [] }
+    const resolvedFile: UFSFile = { file, arrayBuffer, errors: [] }
 
     if (isValidAudio(file, accept) || isValidVideo(file, accept)) {
       await decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => {
@@ -29,7 +28,7 @@ export function useFileSelect(props: UseFileSelectProps) {
 
     if (isValidImage(file, accept) && preview) resolvedFile.preview = URL.createObjectURL(file)
 
-    if (isRules) resolvedFile.errors = enforceRules(rules as Rule[], resolvedFile as UFSFile)
+    if (rules?.length) resolvedFile.errors = await enforceRules(rules, resolvedFile)
 
     resolve(resolvedFile)
   }

@@ -1,12 +1,10 @@
-export type FormatsRule = {
-    key: 'format'
-    formats: string[]
-}
+import { UFSFile } from "./fileTypes"
 
-export type DurationRule =
-    { key: 'duration', min?: number, max?: number }
+export interface FormatsRule { key: 'format', formats: string[] }
+export interface DurationRule { key: 'duration', min?: number, max?: number }
+export interface SizeRule { key: 'size', min?: number, max?: number }
+export interface CustomRule { key: string, validator: CustomRuleValidator }
+export type FactoryRule = FormatsRule | DurationRule | SizeRule
+export type Rule = FactoryRule | CustomRule
 
-export type SizeRule =
-    { key: 'size', min?: number, max?: number }
-
-export type Rule = FormatsRule | DurationRule | SizeRule
+export type CustomRuleValidator = (file: UFSFile) => Promise<Boolean>
