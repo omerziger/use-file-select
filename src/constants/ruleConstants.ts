@@ -1,0 +1,1 @@
+export const FACTORY_RULE_KEYS = ['size', 'format', 'duration']

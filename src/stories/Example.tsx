@@ -1,14 +1,21 @@
 import React from 'react'
-import { useFileSelect } from '../'
+import { useFileSelect } from '..'
+import { CustomRule, UFSFile } from '../types'
 
 export default function Example() {
+  const customRule: CustomRule = {key: 'channel-rule', validator: async(file: UFSFile) => {
+    let isValid = true
+    if (file.audioBuffer?.numberOfChannels !== 2) isValid = false
+    return isValid
+  }}
+ 
   const { select, files, loading } = useFileSelect({
     accept: 'audio',
     onDone(files) {
       console.log(files)
     },
     multiple: true,
-    rules: [{ key: 'duration', max: 9 }]
+    rules: [customRule]
   })
   return (
     <>

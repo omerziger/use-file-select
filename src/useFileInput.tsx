@@ -1,12 +1,13 @@
-import { ChangeEvent, MutableRefObject, useEffect, useRef } from 'react'
+import { MutableRefObject, useEffect, useRef } from 'react'
+import { TEXT, TEXT_DEFAULT_FORMATS } from './constants'
+import { FileType } from './types'
 
 export interface UseFileInputProps {
-  accept?: 'audio' | 'image' | 'video' | 'text' | null
+  accept?:  FileType | null
   formats?: string[]
   onChange: (e: Event) => void
   multiple?: boolean
 }
-const TEXT_DEFAULT = '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.text,application/pdf'
 
 export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInputElement> {
   const { accept, formats, onChange: handleChange, multiple } = props
@@ -18,8 +19,8 @@ export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInp
 
     multiple && currentFileInput.setAttribute('multiple', multiple.toString())
 
-    if (accept === 'text' && !formats) currentFileInput.setAttribute('accept', TEXT_DEFAULT)
-    if (accept && accept !== 'text' && !formats) currentFileInput.setAttribute('accept', `${accept}/*`)
+    if (accept === TEXT && !formats) currentFileInput.setAttribute('accept', TEXT_DEFAULT_FORMATS)
+    if (accept && accept !== TEXT && !formats) currentFileInput.setAttribute('accept', `${accept}/*`)
     if (accept && formats) currentFileInput.setAttribute('accept', `${accept}/*, ${formats.map((f) => `.${f}, `)}`)
     if (!accept && formats) currentFileInput.setAttribute('accept', `${formats.map((f) => `.${f}, `)}`)
   }, [formats])
