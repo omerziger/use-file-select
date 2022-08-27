@@ -1,7 +1,7 @@
 {
-  "name": "use-file-wizard",
+  "name": "use-file-select",
   "version": "1.0.0",
-  "description": "This hook purpose is to lift the burden of managing file upload processes from your code base",
+  "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
