@@ -13,7 +13,7 @@ export interface UseFileSelectProps {
 
 export function useFileSelect(props: UseFileSelectProps) {
   const { accept, onDone, preview, rules } = props
-  const [loading, setLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
 
   const handleReaderLoadEnd = async (e: ProgressEvent, file: File, resolve: any) => {
@@ -45,7 +45,7 @@ export function useFileSelect(props: UseFileSelectProps) {
     const fileList = (e.target as HTMLInputElement).files as FileList
     if (!fileList.length) return
 
-    setLoading(true)
+    setIsLoading(true)
     const readers: Promise<any>[] = []
 
     const fileArray = Array.from(fileList)
@@ -54,7 +54,7 @@ export function useFileSelect(props: UseFileSelectProps) {
     await Promise.all(readers).then(async (resolvedFiles: UFSFile[]) => {
       setFiles(resolvedFiles)
       await onDone?.(resolvedFiles)
-      setLoading(false)
+      setIsLoading(false)
     })
   }
 
@@ -66,12 +66,12 @@ export function useFileSelect(props: UseFileSelectProps) {
 
   return {
     files,
-    loading,
+    isLoading,
     select: () => fileInput.current.click(),
     clear: () => {
       fileInput.current.value = ''
       setFiles([])
-      setLoading(false)
+      setIsLoading(false)
     },
   }
 }

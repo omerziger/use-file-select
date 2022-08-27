@@ -9,7 +9,7 @@ export default function Example() {
     return isValid
   }}
  
-  const { select, files, loading } = useFileSelect({
+  const { select, files, isLoading } = useFileSelect({
     accept: 'audio',
     onDone(files) {
       console.log(files)
@@ -20,7 +20,7 @@ export default function Example() {
   return (
     <>
       <button onClick={select}>Select File</button>
-      <p>{loading ? 'loading...' : null}</p>
+      <p>{isLoading ? 'loading...' : null}</p>
 
       {files.map(file => (
         <div key={Math.floor(Math.random() * 10000000000) + ''}>
