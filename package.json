@@ -1,13 +1,11 @@
 {
   "name": "use-file-select",
   "version": "2.0.4",
-  "description": "",
+  "description": "Light and customizable interface for handling file selection in React",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build": "tsc"
   },
   "author": "omer ziger",
   "license": "ISC",
