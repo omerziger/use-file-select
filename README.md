@@ -1,12 +1,7 @@
-<div align="center">
-
-<image src="https://user-images.githubusercontent.com/73285295/187028854-fc4d75d8-d010-414a-b173-5280774eb167.png" height="142"/>
-  <h1 style="border-bottom: unset;" align="center">use-file-select</h1>
-  <h2 align="center">
+<image align="left" src="https://user-images.githubusercontent.com/73285295/187028854-fc4d75d8-d010-414a-b173-5280774eb167.png" height="142"/> <h1>use-file-select</h1>
+  <h2>
     Light and customizable interface for handling file selection in React
   </h2>
-</div>
-
 
 ## About
 
@@ -102,7 +97,7 @@ Detailed documentation is coming soon...
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License.
+Distributed under the ISC License.
 
 <!-- CONTACT -->
 ## Contact
