@@ -5,7 +5,7 @@ import { FileType, Rule, UFSFile } from './types'
 
 export interface UseFileSelectProps {
   accept: FileType
-  onDone?: (files: UFSFile[]) => any
+  onDone?: (files: UFSFile[]) => Promise<any>
   preview?: boolean
   multiple?: boolean
   rules?: Rule[]
