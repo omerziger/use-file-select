@@ -1,6 +1,6 @@
 <image align="left" src="https://user-images.githubusercontent.com/73285295/187028854-fc4d75d8-d010-414a-b173-5280774eb167.png" height="142"/> <h1>use-file-select</h1>
   <h2>
-    Light and customizable interface for handling file selection in React
+    Light and customizable interface for handling file selection in React projects
   </h2>
 
 ## About
