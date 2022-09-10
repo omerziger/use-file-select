@@ -97,7 +97,7 @@ Detailed documentation is coming soon...
 <!-- LICENSE -->
 ## License
 
-Distributed under the ISC License.
+Distributed under the MIT License.
 
 <!-- CONTACT -->
 ## Contact
