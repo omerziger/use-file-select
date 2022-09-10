@@ -8,7 +8,7 @@
     "build": "tsc"
   },
   "author": "omer ziger",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.18.2",
     "@types/react": "^18.0.9",
@@ -18,8 +18,8 @@
     "typescript": "^4.7.2"
   },
   "peerDependencies": {
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^17.2.0",
+    "react-dom": "^17.2.0"
   },
   "dependencies": {}
 }
