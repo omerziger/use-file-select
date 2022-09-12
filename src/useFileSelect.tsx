@@ -6,13 +6,13 @@ import { FileType, Rule, UFSFile } from './types'
 export interface UseFileSelectProps {
   accept: FileType
   onDone?: (files: UFSFile[]) => Promise<any>
-  preview?: boolean
+  objectURL?: boolean
   multiple?: boolean
   rules?: Rule[]
 }
 
 export function useFileSelect(props: UseFileSelectProps) {
-  const { accept, onDone, preview, rules } = props
+  const { accept, onDone, objectURL, rules } = props
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
 
@@ -26,7 +26,7 @@ export function useFileSelect(props: UseFileSelectProps) {
       })
     }
 
-    if (isValidImage(file, accept) && preview) resolvedFile.preview = URL.createObjectURL(file)
+    if (isValidImage(file, accept) && objectURL) resolvedFile.objectURL = URL.createObjectURL(file)
 
     if (rules?.length) resolvedFile.errors = await enforceRules(rules, resolvedFile)
 

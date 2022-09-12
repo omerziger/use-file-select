@@ -4,7 +4,7 @@ export type UFSFile = {
     file: File
     arrayBuffer: ArrayBuffer
     audioBuffer?: AudioBuffer
-    preview?: string | null
+    objectURL?: string | null
     errors: Array<UFSError | UFSCustomError>
 }
 
