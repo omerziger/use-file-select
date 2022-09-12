@@ -10,7 +10,7 @@ The useFileSelect custom hook purpose is removing overhead of developing file se
 * Light and easy to use.
 * Simple rule system for enforcing you'r app's requirements.
 * Selected files return with extra, enriched data.
-* Declerative interface and types.
+* Declarative interface and types.
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ import { useFileSelect } from 'use-file-select';
 function Example() {
   const { files, isLoading, select, clear } = useFileSelect({
     accept: 'image',
-    preview: true,
+    objectURL: true,
     multiple: true,
     onDone: (files) => console.log(files),
     rules: [
@@ -55,7 +55,7 @@ return (
   
      <br/>
   
-     {!isLoading && <img src={files[0].preview}/>}
+     {!isLoading && <img src={files[0].objectURL}/>}
  </>
 )
 }
@@ -76,21 +76,21 @@ will be opened.
 
 **Right after the user's selections are confirmed:**
 
-* The files are enriched with a decoded array buffer and a preview.
+* The files are enriched with a decoded array buffer and a objectURL.
 
 > An Audio Buffer will be added too in case of audio/video files)
 
-* Rules are enforced. A failiure to pass a certain rule's validation will cause the rule's key to be pushed to an error array on the file's object.
+* Rules are enforced. A failure to pass a certain rule's validation will cause the rule's key to be pushed to an error array on the file's object.
 
-> Hence, the desicion on how to handle errors is reserved to the developer
+> Hence, the decision on how to handle errors is reserved to the developer
 
 * Next, the "onDone" callback provided to the hook will run, executing the developer's side-effects.
 
-* Finnaly, the "isLoading" variable will be set to false and the preview of the first file will be rendered as requested.
+* Finally, the "isLoading" variable will be set to false and the objectURL(preview) of the first file will be rendered as requested.
 
 ## Docs
 
-For you're convinience I made this package fully typed and declerative as much as I can :)
+For you're convenience I made this package fully typed and declarative as much as I can :)
 <br/>
 Detailed documentation is coming soon...
 
