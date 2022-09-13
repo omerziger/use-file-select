@@ -1,42 +1,50 @@
 import { useState } from 'react'
 import { useFileInput } from '.'
-import { decodeAudioFile, enforceRules, isValidAudio, isValidImage, isValidVideo } from './utils'
+import { decodeAudioFile, enforceRules, isValidFile } from './utils'
+import { AUDIO, VIDEO } from './constants'
 import { FileType, Rule, UFSFile } from './types'
 
 export interface UseFileSelectProps {
-  accept: FileType
-  onDone?: (files: UFSFile[]) => Promise<any>
+  accept?: FileType
+  rules?: Rule[]
   objectURL?: boolean
   multiple?: boolean
-  rules?: Rule[]
+  onDone?: (files: UFSFile[]) => Promise<any>
 }
 
 export function useFileSelect(props: UseFileSelectProps) {
-  const { accept, onDone, objectURL, rules } = props
+  const { accept, rules, objectURL, multiple, onDone } = props
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
 
-  const handleReaderLoadEnd = async (e: ProgressEvent, file: File, resolve: any) => {
+  const handleReaderLoadEnd = async (e: ProgressEvent, file: File, resolve: any, reject: any) => {
     const arrayBuffer = (e.target as FileReader).result as ArrayBuffer
     const resolvedFile: UFSFile = { file, arrayBuffer, errors: [] }
 
-    if (isValidAudio(file, accept) || isValidVideo(file, accept)) {
-      await decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => {
-        resolvedFile.audioBuffer = audioBuffer
-      })
+    if (accept) {
+      if (!isValidFile(file, accept)) {
+        reject(new Error(`Mime type "${file.type}" of file: ${file.name}, does not match the accept prop`))
+      }
+
+      switch (accept) {
+        case AUDIO:
+        case VIDEO:
+          await decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => {
+            resolvedFile.audioBuffer = audioBuffer
+          })
+      }
     }
 
-    if (isValidImage(file, accept) && objectURL) resolvedFile.objectURL = URL.createObjectURL(file)
-
     if (rules?.length) resolvedFile.errors = await enforceRules(rules, resolvedFile)
+    if (objectURL) resolvedFile.objectURL = URL.createObjectURL(file)
 
     resolve(resolvedFile)
   }
 
   const processFile = (file: File) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const fileReader = new FileReader()
-      fileReader.onloadend = e => handleReaderLoadEnd(e, file, resolve)
+      fileReader.onloadend = e => handleReaderLoadEnd(e, file, resolve, reject)
       fileReader.readAsArrayBuffer(file)
     })
   }
@@ -60,7 +68,7 @@ export function useFileSelect(props: UseFileSelectProps) {
 
   const fileInput = useFileInput({
     accept,
-    multiple: true,
+    multiple,
     onChange: handleFileChange,
   })
 
