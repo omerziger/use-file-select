@@ -1,3 +1,3 @@
 export { decodeAudioFile } from './decodeAudioFIle'
 export { enforceRules } from './enforceRules'
-export { isAudio, isImage, isText, isVideo, isValidAudio, isValidImage, isValidVideo } from './fileTypeValidators'
+export { isAudio, isImage, isText, isVideo, isValidFile } from './fileTypeValidators'
