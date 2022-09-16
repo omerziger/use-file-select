@@ -9,8 +9,8 @@ export interface UseFileInputProps {
   multiple?: boolean
 }
 
-export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInputElement> {
-  const { accept, formats, onChange: handleChange, multiple } = props
+export function useFileInput(props?: UseFileInputProps): MutableRefObject<HTMLInputElement> {
+  const { accept, formats, onChange: handleChange, multiple } = props ?? {}
   const fileInput = useRef<HTMLInputElement>(document.createElement('input'))
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInp
 
     multiple && currentFileInput.setAttribute('multiple', multiple.toString())
 
-    if (accept === TEXT && !formats) currentFileInput.setAttribute('accept', TEXT_DEFAULT_FORMATS)
+    if (accept && accept === TEXT && !formats) currentFileInput.setAttribute('accept', TEXT_DEFAULT_FORMATS)
     if (accept && accept !== TEXT && !formats) currentFileInput.setAttribute('accept', `${accept}/*`)
     if (accept && formats) currentFileInput.setAttribute('accept', `${accept}/*, ${formats.map((f) => `.${f}, `)}`)
     if (!accept && formats) currentFileInput.setAttribute('accept', `${formats.map((f) => `.${f}, `)}`)
@@ -27,8 +27,8 @@ export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInp
 
   useEffect(() => {
     const currentFileInput = fileInput.current
-    currentFileInput.addEventListener('change', handleChange)
-    return () => currentFileInput.removeEventListener('change', handleChange)
+    handleChange && currentFileInput.addEventListener('change', handleChange)
+    return () => handleChange && currentFileInput.removeEventListener('change', handleChange)
   }, [handleChange])
 
   return fileInput
