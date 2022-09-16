@@ -12,8 +12,7 @@ export interface UseFileSelectProps {
   onDone?: (files: UFSFile[]) => Promise<any>
 }
 
-export function useFileSelect(props: UseFileSelectProps = {}) {
-  const { accept, rules, objectURL, multiple, onDone } = props
+export function useFileSelect(props?: UseFileSelectProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
 
@@ -21,12 +20,12 @@ export function useFileSelect(props: UseFileSelectProps = {}) {
     const arrayBuffer = (e.target as FileReader).result as ArrayBuffer
     const resolvedFile: UFSFile = { file, arrayBuffer, errors: [] }
 
-    if (accept) {
-      if (!isValidFile(file, accept)) {
+    if (props?.accept) {
+      if (!isValidFile(file, props.accept)) {
         reject(new Error(`Mime type "${file.type}" of file: ${file.name}, does not match the accept prop`))
       }
 
-      switch (accept) {
+      switch (props.accept) {
         case AUDIO:
         case VIDEO:
           await decodeAudioFile(arrayBuffer, (audioBuffer: AudioBuffer) => {
@@ -35,8 +34,8 @@ export function useFileSelect(props: UseFileSelectProps = {}) {
       }
     }
 
-    if (rules?.length) resolvedFile.errors = await enforceRules(rules, resolvedFile)
-    if (objectURL) resolvedFile.objectURL = URL.createObjectURL(file)
+    if (props?.rules?.length) resolvedFile.errors = await enforceRules(props?.rules, resolvedFile)
+    if (props?.objectURL) resolvedFile.objectURL = URL.createObjectURL(file)
 
     resolve(resolvedFile)
   }
@@ -61,14 +60,14 @@ export function useFileSelect(props: UseFileSelectProps = {}) {
 
     await Promise.all(readers).then(async (resolvedFiles: UFSFile[]) => {
       setFiles(resolvedFiles)
-      await onDone?.(resolvedFiles)
+      await props?.onDone?.(resolvedFiles)
       setIsLoading(false)
     })
   }
 
   const fileInput = useFileInput({
-    accept,
-    multiple,
+    accept: props?.accept,
+    multiple: props?.multiple,
     onChange: handleFileChange,
   })
 
