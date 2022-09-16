@@ -12,8 +12,8 @@ export interface UseFileSelectProps {
   onDone?: (files: UFSFile[]) => Promise<any>
 }
 
-export function useFileSelect(props?: UseFileSelectProps) {
-  const { accept, rules, objectURL, multiple, onDone } = props ?? {}
+export function useFileSelect(props: UseFileSelectProps = {}) {
+  const { accept, rules, objectURL, multiple, onDone } = props
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
 
