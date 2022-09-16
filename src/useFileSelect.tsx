@@ -13,7 +13,7 @@ export interface UseFileSelectProps {
 }
 
 export function useFileSelect(props?: UseFileSelectProps) {
-  const { accept, rules, objectURL, multiple, onDone } = props
+  const { accept, rules, objectURL, multiple, onDone } = props ?? {}
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<UFSFile[]>([])
 
