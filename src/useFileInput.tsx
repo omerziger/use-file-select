@@ -3,14 +3,14 @@ import { TEXT, TEXT_DEFAULT_FORMATS } from './constants'
 import { FileType } from './types'
 
 export interface UseFileInputProps {
-  accept?:  FileType | null
+  accept?: FileType
   formats?: string[]
   onChange: (e: Event) => void
   multiple?: boolean
 }
 
-export function useFileInput(props?: UseFileInputProps): MutableRefObject<HTMLInputElement> {
-  const { accept, formats, onChange: handleChange, multiple } = props ?? {}
+export function useFileInput(props: UseFileInputProps): MutableRefObject<HTMLInputElement> {
+  const { accept, formats, onChange, multiple } = props
   const fileInput = useRef<HTMLInputElement>(document.createElement('input'))
 
   useEffect(() => {
@@ -27,9 +27,9 @@ export function useFileInput(props?: UseFileInputProps): MutableRefObject<HTMLIn
 
   useEffect(() => {
     const currentFileInput = fileInput.current
-    handleChange && currentFileInput.addEventListener('change', handleChange)
-    return () => handleChange && currentFileInput.removeEventListener('change', handleChange)
-  }, [handleChange])
+    currentFileInput.addEventListener('change', onChange)
+    return () => currentFileInput.removeEventListener('change', onChange)
+  }, [onChange])
 
   return fileInput
 }
