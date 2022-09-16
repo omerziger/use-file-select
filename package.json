@@ -1,6 +1,6 @@
 {
   "name": "use-file-select",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Light and customizable interface for handling file selection in React",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
