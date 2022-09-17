@@ -1,11 +1,9 @@
-<image align="left" src="https://user-images.githubusercontent.com/73285295/187028854-fc4d75d8-d010-414a-b173-5280774eb167.png" height="142"/> <h1>use-file-select</h1>
-  <h2>
-    Light and customizable interface for handling file selection in React projects
-  </h2>
+ <h1 align='center' style=''>use-file-select</h1>
+ <h3 align='center'> Light and customizable hooks for handling file selection in React projects</h2>
 
 ## About
 
-The useFileSelect custom hook purpose is removing overhead of developing file selection mechanisms.
+The use-file-select package's purpose is removing overhead of developing file selection mechanisms.
 
 * Light and easy to use.
 * Simple rule system for enforcing you'r app's requirements.
@@ -24,8 +22,96 @@ npm install use-file-select
 yarn add use-file-select
 ```
 
-## Example
+### Quick Example
 
+```jsx
+import { useFileSelect } from 'use-file-select';
+
+function ExampleComponent() {
+  const { files, select } = useFileSelect()
+
+  return(
+    <div>
+      <button onClick={select}>Select File</button>
+      <p>{files[0]?.file.name}</p>
+    </div>
+  )
+}
+```
+
+## Docs
+
+### useFileInput
+
+Once mounted, this hook creates an HTML input element on the DOM
+with the type of "file" and returns a ref to this element.
+Its purpose is not to be visible, but to expose the functionality of the file input.
+
+|Prop Name|Type| Default| Description
+|------|------|----|---
+|accept|'audio', 'video', 'image', 'text' | | the file types the file input should accept|
+|formats|string[]| |an array of formats fitting the accept prop if specified|
+|onChange*|(Event) => any| |A required callback for files change post selection|
+|multiple|boolean| false |When true the file input allows the user to select more than one file|
+
+#### Return
+```ts
+type = MutableRefObject<HTMLInputElement>
+```
+React ref to an HTML input element of type file.
+
+#### Example
+
+```jsx
+import { useFileInput } from 'use-file-select';
+
+function ExampleComponent() {
+  const fileInputRef = useFileInput({
+    onChange: (e) => {
+      const fileList = e.target.files
+      console.log(fileList[0].name)
+    }
+  )}
+
+  return(
+    <button onClick={() => fileInputRef.current.click()}>
+      Select Files
+    </button>
+  )
+}
+```
+
+<br/>
+
+### useFileSelect
+
+This hook adds abstraction and some logic to the useFileInput hook.
+It provides a simple interface to enforce requirements on file inputs.
+
+|Prop Name|Type| Default| Description
+|------|------|----|---
+|accept|'audio', 'video', 'image', 'text' | | the file types the file input should accept|
+|rules|Rule[]| | A rule is some validation that will run once the file is finished processing, if the file doesn't pass the validation, the rule's key will return in the error array of the file. A rule can be one of the ready made rules or your own custom rule.
+|objectURL|boolean|false| If true, files will return with an objectURL representation of themselves also.
+|onDone|(UFSFile[]) => Promise< any >| | Is an asynchronous callback that will run last, just before the isLoading parameter is set to false, the callbacks parameter is an array of useFileSelect files.
+|multiple|boolean| false |When true the file input allows the user to select more than one file|
+
+#### Return
+```ts
+interface {
+  files: UFSFile[]
+  isLoading: boolean
+  select: () => void
+  clear: () => void
+}
+```
+
+**files** : An array of useFileSelect files, another option to access the files besides the onDone callback
+**isLoading**: Indicates if the processing, rules, and the onDone callback have finished
+**select**: Fires a mouse click event on the file input ref
+**clear**: Clears the values on the file input, sets the files array to empty array, set the isLoading to false
+
+#### Example using all props
 ```jsx
 import { useFileSelect } from 'use-file-select';
 
@@ -88,11 +174,7 @@ will be opened.
 
 * Finally, the "isLoading" variable will be set to false and the objectURL(preview) of the first file will be rendered as requested.
 
-## Docs
-
-For you're convenience I made this package fully typed and declarative as much as I can :)
 <br/>
-Detailed documentation is coming soon...
 
 <!-- LICENSE -->
 ## License
@@ -102,6 +184,10 @@ Distributed under the MIT License.
 <!-- CONTACT -->
 ## Contact
 
-Omer Ziger - [LinkedIn](https://www.linkedin.com/in/omerziger/) - [Gmail](omerziger97@gmail.com)
+Omer Ziger: [LinkedIn](https://www.linkedin.com/in/omerziger/) [Gmail](omerziger97@gmail.com)
 
-Project Link: [omerziger/use-file-select](https://github.com/omerziger/use-file-select)
+Github: [omerziger/use-file-select](https://github.com/omerziger/use-file-select)
+
+NPM: [use-file-select](https://www.npmjs.com/package/use-file-select)
+
+
